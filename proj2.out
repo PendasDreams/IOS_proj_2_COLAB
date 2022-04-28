@@ -1,0 +1,402 @@
+1: O 1: started
+2: O 2: started
+3: O 1: Going to queue
+4: O 3: started
+5: O 2: Going to queue
+6: O 4: started
+7: O 5: started
+8: O 3: Going to queue
+9: O 6: started
+10: O 7: started
+11: O 8: started
+12: O 4: Going to queue
+13: O 9: started
+14: O 10: started
+15: O 11: started
+16: O 5: Going to queue
+17: O 12: started
+18: O 13: started
+19: O 14: started
+20: O 15: started
+21: O 16: started
+22: O 6: Going to queue
+23: O 17: started
+24: O 18: started
+25: O 7: Going to queue
+26: O 19: started
+27: O 20: started
+28: O 8: Going to queue
+29: O 21: started
+30: O 22: started
+31: O 9: Going to queue
+32: O 10: Going to queue
+33: O 23: started
+34: O 24: started
+35: O 11: Going to queue
+36: O 12: Going to queue
+37: O 25: started
+38: O 13: Going to queue
+39: O 14: Going to queue
+40: O 15: Going to queue
+41: O 26: started
+42: O 27: started
+43: O 16: Going to queue
+44: O 17: Going to queue
+45: O 18: Going to queue
+46: O 19: Going to queue
+47: O 28: started
+48: O 29: started
+49: O 30: started
+50: O 20: Going to queue
+51: O 21: Going to queue
+52: O 22: Going to queue
+53: O 23: Going to queue
+54: O 31: started
+55: O 32: started
+56: O 33: started
+57: O 24: Going to queue
+58: O 25: Going to queue
+59: O 34: started
+60: O 35: started
+61: O 36: started
+62: O 26: Going to queue
+63: O 37: started
+64: O 27: Going to queue
+65: O 28: Going to queue
+66: O 38: started
+67: O 39: started
+68: O 40: started
+69: O 41: started
+70: O 29: Going to queue
+71: O 30: Going to queue
+72: O 42: started
+73: O 43: started
+74: O 31: Going to queue
+75: O 44: started
+76: O 45: started
+77: O 46: started
+78: O 47: started
+79: O 32: Going to queue
+80: O 33: Going to queue
+81: O 34: Going to queue
+82: O 48: started
+83: O 49: started
+84: O 50: started
+85: O 51: started
+86: O 52: started
+87: O 53: started
+88: O 54: started
+89: O 35: Going to queue
+90: O 55: started
+91: O 56: started
+92: O 57: started
+93: O 36: Going to queue
+94: O 37: Going to queue
+95: O 58: started
+96: O 59: started
+97: O 38: Going to queue
+98: O 60: started
+99: O 39: Going to queue
+100: O 61: started
+101: O 62: started
+102: H 1: started
+103: H 2: started
+104: H 3: started
+105: O 63: started
+106: O 64: started
+107: O 65: started
+108: H 4: started
+109: O 40: Going to queue
+110: H 1: Going to queue
+111: H 5: started
+112: H 6: started
+113: H 7: started
+114: H 8: started
+115: H 9: started
+116: O 66: started
+117: H 10: started
+118: H 11: started
+119: O 67: started
+120: H 2: Going to queue
+121: O 41: Going to queue
+122: O 68: started
+123: H 12: started
+124: H 13: started
+125: H 14: started
+126: H 3: Going to queue
+127: O 42: Going to queue
+128: H 15: started
+129: H 16: started
+130: H 17: started
+131: H 4: Going to queue
+132: O 43: Going to queue
+133: O 44: Going to queue
+134: H 18: started
+135: H 19: started
+136: H 5: Going to queue
+137: O 45: Going to queue
+138: H 6: Going to queue
+139: O 69: started
+140: H 20: started
+141: O 70: started
+142: H 21: started
+143: O 71: started
+144: H 7: Going to queue
+145: O 46: Going to queue
+146: H 22: started
+147: H 23: started
+148: H 8: Going to queue
+149: H 24: started
+150: H 25: started
+151: H 26: started
+152: H 9: Going to queue
+153: O 47: Going to queue
+154: H 10: Going to queue
+155: H 27: started
+156: O 72: started
+157: H 28: started
+158: H 11: Going to queue
+159: O 73: started
+160: H 29: started
+161: H 30: started
+162: H 31: started
+163: H 12: Going to queue
+164: O 48: Going to queue
+165: H 32: started
+166: H 13: Going to queue
+167: H 33: started
+168: H 34: started
+169: H 14: Going to queue
+170: H 35: started
+171: H 36: started
+172: H 37: started
+173: O 49: Going to queue
+174: O 74: started
+175: H 38: started
+176: O 50: Going to queue
+177: H 15: Going to queue
+178: H 39: started
+179: H 40: started
+180: H 16: Going to queue
+181: H 41: started
+182: H 42: started
+183: H 17: Going to queue
+184: H 18: Going to queue
+185: H 19: Going to queue
+186: H 43: started
+187: H 44: started
+188: H 45: started
+189: H 20: Going to queue
+190: H 21: Going to queue
+191: H 22: Going to queue
+192: H 46: started
+193: H 23: Going to queue
+194: H 47: started
+195: H 48: started
+196: H 49: started
+197: H 24: Going to queue
+198: H 25: Going to queue
+199: O 51: Going to queue
+200: H 50: started
+201: O 75: started
+202: H 51: started
+203: O 52: Going to queue
+204: O 76: started
+205: H 52: started
+206: O 53: Going to queue
+207: H 26: Going to queue
+208: O 77: started
+209: H 53: started
+210: O 54: Going to queue
+211: H 27: Going to queue
+212: H 54: started
+213: O 78: started
+214: H 28: Going to queue
+215: O 55: Going to queue
+216: O 79: started
+217: H 55: started
+218: O 56: Going to queue
+219: O 80: started
+220: H 56: started
+221: O 57: Going to queue
+222: H 29: Going to queue
+223: O 81: started
+224: O 58: Going to queue
+225: O 59: Going to queue
+226: O 82: started
+227: H 57: started
+228: H 58: started
+229: H 30: Going to queue
+230: O 83: started
+231: H 59: started
+232: O 60: Going to queue
+233: H 31: Going to queue
+234: O 61: Going to queue
+235: H 32: Going to queue
+236: O 84: started
+237: O 62: Going to queue
+238: O 63: Going to queue
+239: H 60: started
+240: H 61: started
+241: H 33: Going to queue
+242: H 34: Going to queue
+243: O 64: Going to queue
+244: O 85: started
+245: H 62: started
+246: O 65: Going to queue
+247: H 35: Going to queue
+248: H 36: Going to queue
+249: O 86: started
+250: O 66: Going to queue
+251: H 37: Going to queue
+252: O 87: started
+253: H 63: started
+254: O 67: Going to queue
+255: H 64: started
+256: O 68: Going to queue
+257: H 38: Going to queue
+258: H 65: started
+259: H 66: started
+260: H 39: Going to queue
+261: H 40: Going to queue
+262: O 88: started
+263: O 69: Going to queue
+264: H 67: started
+265: H 41: Going to queue
+266: H 42: Going to queue
+267: H 68: started
+268: O 89: started
+269: O 70: Going to queue
+270: O 71: Going to queue
+271: O 72: Going to queue
+272: H 69: started
+273: H 43: Going to queue
+274: H 44: Going to queue
+275: H 70: started
+276: H 71: started
+277: H 72: started
+278: H 45: Going to queue
+279: H 46: Going to queue
+280: O 73: Going to queue
+281: H 47: Going to queue
+282: H 48: Going to queue
+283: H 49: Going to queue
+284: H 73: started
+285: H 74: started
+286: H 50: Going to queue
+287: H 51: Going to queue
+288: H 52: Going to queue
+289: H 75: started
+290: H 76: started
+291: H 53: Going to queue
+292: H 54: Going to queue
+293: O 74: Going to queue
+294: H 55: Going to queue
+295: H 77: started
+296: O 90: started
+297: H 78: started
+298: O 75: Going to queue
+299: H 56: Going to queue
+300: H 79: started
+301: O 91: started
+302: H 57: Going to queue
+303: H 58: Going to queue
+304: O 76: Going to queue
+305: H 80: started
+306: H 59: Going to queue
+307: H 60: Going to queue
+308: O 92: started
+309: H 81: started
+310: O 77: Going to queue
+311: H 61: Going to queue
+312: O 78: Going to queue
+313: H 82: started
+314: H 62: Going to queue
+315: H 63: Going to queue
+316: O 79: Going to queue
+317: H 64: Going to queue
+318: O 93: started
+319: H 83: started
+320: O 80: Going to queue
+321: H 65: Going to queue
+322: H 66: Going to queue
+323: O 94: started
+324: H 84: started
+325: H 67: Going to queue
+326: H 68: Going to queue
+327: H 69: Going to queue
+328: O 81: Going to queue
+329: H 70: Going to queue
+330: O 95: started
+331: H 71: Going to queue
+332: O 82: Going to queue
+333: O 83: Going to queue
+334: H 72: Going to queue
+335: H 73: Going to queue
+336: H 85: started
+337: H 74: Going to queue
+338: H 75: Going to queue
+339: O 84: Going to queue
+340: H 86: started
+341: H 76: Going to queue
+342: H 77: Going to queue
+343: O 85: Going to queue
+344: H 87: started
+345: H 88: started
+346: O 96: started
+347: H 78: Going to queue
+348: O 97: started
+349: O 86: Going to queue
+350: O 87: Going to queue
+351: H 79: Going to queue
+352: H 89: started
+353: H 90: started
+354: H 80: Going to queue
+355: O 88: Going to queue
+356: H 91: started
+357: H 81: Going to queue
+358: H 82: Going to queue
+359: O 98: started
+360: H 83: Going to queue
+361: O 89: Going to queue
+362: H 92: started
+363: H 93: started
+364: H 84: Going to queue
+365: H 85: Going to queue
+366: H 94: started
+367: H 86: Going to queue
+368: H 87: Going to queue
+369: H 95: started
+370: O 99: started
+371: O 90: Going to queue
+372: O 91: Going to queue
+373: H 96: started
+374: H 88: Going to queue
+375: H 89: Going to queue
+376: H 97: started
+377: H 90: Going to queue
+378: H 91: Going to queue
+379: O 92: Going to queue
+380: H 98: started
+381: H 99: started
+382: H 92: Going to queue
+383: O 93: Going to queue
+384: O 94: Going to queue
+385: O 95: Going to queue
+386: O 100: started
+387: H 93: Going to queue
+388: O 96: Going to queue
+389: O 97: Going to queue
+390: H 94: Going to queue
+391: H 95: Going to queue
+392: H 96: Going to queue
+393: O 98: Going to queue
+394: H 97: Going to queue
+395: H 100: started
+396: O 99: Going to queue
+397: H 98: Going to queue
+398: H 99: Going to queue
+399: H 100: Going to queue
+400: O 100: Going to queue
+401: H 101: started
+402: H 101: Going to queue
