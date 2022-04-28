@@ -71,6 +71,7 @@ int main(int argc, char **argv){
         
     input_parse(argc,argv, &params);
 
+
     // check output file
     if((file = fopen("proj2.out", "w")) == NULL) 
     {
@@ -149,7 +150,7 @@ int input_parse(int argc, char *argv[], params_t *params){
 
     if(argc != 5)
     {
-        fprintf(stderr, "Parameters was used wrong.\n");
+        fprintf(stderr, "Wrong amount of parameters.\n");
         exit(1);
     }
 
@@ -158,16 +159,11 @@ int input_parse(int argc, char *argv[], params_t *params){
         val = strtol(argv[i], &next,10);
 
         if((next == argv[i]) || (*next != '\0')){
-            error = 1;
+            fprintf(stderr,"Parameters must be numbers\n");
+            exit(1);
         }
     }
 
-    if(error == 1){
-        fprintf(stderr, "Parameters was used wrong.\n");
-        fprintf(stderr, "Insert arguments like:  ./program [N]O [N]H TI TB\n");
-        fprintf(stderr, "For more info look at the project website\n");
-        exit(1);
-    }
 
     //only for translator to stop talking
     val = val + 1;
@@ -177,20 +173,34 @@ int input_parse(int argc, char *argv[], params_t *params){
     params->Hydro =strtol(argv[2],NULL,10);
     params->Max_queue_time =strtol(argv[3],NULL,10);
     params->Max_build_time =strtol(argv[4],NULL,10);
-    
+
+
+    if(params->Hydro < 0)
+    {
+        fprintf(stderr, "Negative amount of Hydrogens\n");
+        exit(1);
+    }
+
+    if(params->Oxy < 0)
+    {
+        fprintf(stderr, "Negative amount of Oxygens.\n");
+        exit(1);
+    }
 
     if(params->Max_build_time > 1000 || params->Max_build_time < 0)
     {
-        error = 1;
+        
+        fprintf(stderr,"Third argument out of range [0-1000].\n");
+        exit(1);
     }
     if(params->Max_queue_time > 1000 || params->Max_queue_time < 0)
     {
-        error = 1;
+        fprintf(stderr,"Fourth argument out of range [0-1000].\n");
+        exit(1);
     }
-
     
 
-    return 0;
+    return error;
 }
 
 
