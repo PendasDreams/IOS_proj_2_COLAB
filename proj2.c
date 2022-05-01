@@ -432,117 +432,139 @@ int input_parse(int argc, char *argv[], params_t *params){
 int prepare_sources(){
 
     // semaphore inicialization
-    oxygen= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0);
-    hydrogen= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0);
-    print= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0);
-    mutex= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0);
-    mutex2= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0);
-    barier= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0);
-    barier1= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0);
-    sem_init(oxygen, 1, 0);
-    sem_init(hydrogen, 1, 0);
-    sem_init(print, 1, 1);
-    sem_init(mutex, 1, 1);
-    sem_init(mutex2, 1, 0);
-    sem_init(barier, 1, 0);
-    sem_init(barier1, 1, 0);
+    if(
+    (oxygen= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0)) == MAP_FAILED ||
+    (hydrogen= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0)) == MAP_FAILED ||
+    (print= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0)) == MAP_FAILED ||
+    (mutex= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0)) == MAP_FAILED ||
+    (mutex2= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0)) == MAP_FAILED ||
+    (barier= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0)) == MAP_FAILED ||
+    (barier1= mmap(NULL, sizeof(sem_t), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, 0, 0)) == MAP_FAILED ||
+    (sem_init(oxygen, 1, 0)) == -1 ||
+    (sem_init(hydrogen, 1, 0)) == -1 ||
+    (sem_init(print, 1, 1)) == -1 ||
+    (sem_init(mutex, 1, 1)) == -1 ||
+    (sem_init(mutex2, 1, 0)) == -1 ||
+    (sem_init(barier, 1, 0)) == -1 ||
+    (sem_init(barier1, 1, 0)) == -1)
+    {
+        fprintf(stderr,"Error has occured during inicializacion of semaphores.\n");
+        clear_sources();
+        exit(1);
+    }
 
     // shared memmory
-    shm_O_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_H_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_count_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_queued_H = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_queued_O = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_O_amount = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_H_amount = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_mutex_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_mutex_id1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_H_mutexing = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_O_mutexing = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_H_mutexing1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_O_mutexing1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_H_mutexing2 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_O_mutexing2 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_H_mutexing3 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_O_mutexing3 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
+    if(
+    (shm_O_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_H_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_count_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_queued_H = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_queued_O = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_O_amount = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_H_amount = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_mutex_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_mutex_id1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_H_mutexing = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_O_mutexing = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_H_mutexing1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_O_mutexing1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_H_mutexing2 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_O_mutexing2 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_H_mutexing3 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
+    (shm_O_mutexing3 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666)) == -1 ||
 
 
-    O_id = (int *) shmat(shm_O_id, NULL, 0);
-    H_id = (int *) shmat(shm_H_id, NULL, 0);
-    count_id = (int *) shmat(shm_count_id, NULL, 0);
-    O_queued = (int *) shmat(shm_queued_O, NULL, 0);
-    H_queued = (int *) shmat(shm_queued_H, NULL, 0);
-    O_amount = (int *) shmat(shm_O_amount, NULL, 0);
-    H_amount = (int *) shmat(shm_H_amount, NULL, 0);
-    mutex_id = (int *) shmat(shm_mutex_id, NULL, 0);
-    mutex_id1 = (int *) shmat(shm_mutex_id1, NULL, 0);
-    H_mutexing = (int *) shmat(shm_H_mutexing, NULL, 0);
-    O_mutexing = (int *) shmat(shm_O_mutexing, NULL, 0);
-    H_mutexing1 = (int *) shmat(shm_H_mutexing1, NULL, 0);
-    O_mutexing1 = (int *) shmat(shm_O_mutexing1, NULL, 0);
-    H_mutexing2 = (int *) shmat(shm_H_mutexing2, NULL, 0);
-    O_mutexing2 = (int *) shmat(shm_O_mutexing2, NULL, 0);
-    H_mutexing3 = (int *) shmat(shm_H_mutexing3, NULL, 0);
-    O_mutexing3 = (int *) shmat(shm_H_mutexing3, NULL, 0);
+    (O_id = (int *) shmat(shm_O_id, NULL, 0)) == NULL ||
+    (H_id = (int *) shmat(shm_H_id, NULL, 0)) == NULL ||
+    (count_id = (int *) shmat(shm_count_id, NULL, 0)) == NULL ||
+    (O_queued = (int *) shmat(shm_queued_O, NULL, 0)) == NULL ||
+    (H_queued = (int *) shmat(shm_queued_H, NULL, 0)) == NULL ||
+    (O_amount = (int *) shmat(shm_O_amount, NULL, 0)) == NULL ||
+    (H_amount = (int *) shmat(shm_H_amount, NULL, 0)) == NULL ||
+    (mutex_id = (int *) shmat(shm_mutex_id, NULL, 0)) == NULL ||
+    (mutex_id1 = (int *) shmat(shm_mutex_id1, NULL, 0)) == NULL ||
+    (H_mutexing = (int *) shmat(shm_H_mutexing, NULL, 0)) == NULL ||
+    (O_mutexing = (int *) shmat(shm_O_mutexing, NULL, 0)) == NULL ||
+    (H_mutexing1 = (int *) shmat(shm_H_mutexing1, NULL, 0)) == NULL ||
+    (O_mutexing1 = (int *) shmat(shm_O_mutexing1, NULL, 0)) == NULL ||
+    (H_mutexing2 = (int *) shmat(shm_H_mutexing2, NULL, 0)) == NULL ||
+    (O_mutexing2 = (int *) shmat(shm_O_mutexing2, NULL, 0)) == NULL ||
+    (H_mutexing3 = (int *) shmat(shm_H_mutexing3, NULL, 0)) == NULL ||
+    (O_mutexing3 = (int *) shmat(shm_O_mutexing3, NULL, 0)) == NULL)
+    {
+        fprintf(stderr,"Error has occured during inicializacion of shared memmory.\n");
+        clear_sources();
+        exit(1);
+    }
     
-
     return 0;
 }
 
 int clear_sources(){
 
     // semaphore celanup
-    sem_destroy(oxygen);
-    sem_destroy(hydrogen);
-    sem_destroy(print);
-    sem_destroy(mutex);
-    sem_destroy(mutex2);
-    sem_destroy(barier);
-    munmap(oxygen, sizeof(sem_t));
-    munmap(hydrogen, sizeof(sem_t));
-    munmap(print, sizeof(sem_t));
-    munmap(mutex, sizeof(sem_t));
-    munmap(mutex2, sizeof(sem_t));
-    munmap(barier, sizeof(sem_t));
-    munmap(barier1, sizeof(sem_t));
+    if(
+    (sem_destroy(oxygen)) == -1 ||
+    (sem_destroy(hydrogen)) == -1 ||
+    (sem_destroy(print)) == -1 ||
+    (sem_destroy(mutex)) == -1 ||
+    (sem_destroy(mutex2)) == -1 ||
+    (sem_destroy(barier)) == -1 ||
+    (munmap(oxygen, sizeof(sem_t))) == -1 ||
+    (munmap(hydrogen, sizeof(sem_t))) == -1 ||
+    (munmap(print, sizeof(sem_t))) == -1 ||
+    (munmap(mutex, sizeof(sem_t))) == -1 ||
+    (munmap(mutex2, sizeof(sem_t))) == -1 ||
+    (munmap(barier, sizeof(sem_t))) == -1 ||
+    (munmap(barier1, sizeof(sem_t))) == -1 )
+    {
+        fprintf(stderr,"Error has occured during deleting semaphores.\n");
+        clear_sources();
+        exit(1);
+    }
 
     // shared memmory cleanup
-    shmctl(shm_O_id, IPC_RMID, NULL);
-    shmctl(shm_count_id, IPC_RMID, NULL);
-    shmctl(shm_H_id, IPC_RMID, NULL);
-    shmctl(shm_queued_O, IPC_RMID, NULL);
-    shmctl(shm_queued_H, IPC_RMID, NULL);
-    shmctl(shm_O_amount, IPC_RMID, NULL);
-    shmctl(shm_H_amount, IPC_RMID, NULL);
-    shmctl(shm_mutex_id, IPC_RMID, NULL);
-    shmctl(shm_mutex_id1, IPC_RMID, NULL);
-    shmctl(shm_H_mutexing, IPC_RMID, NULL);
-    shmctl(shm_O_mutexing, IPC_RMID, NULL);
-    shmctl(shm_H_mutexing1, IPC_RMID, NULL);
-    shmctl(shm_O_mutexing1, IPC_RMID, NULL);
-    shmctl(shm_H_mutexing2, IPC_RMID, NULL);
-    shmctl(shm_O_mutexing2, IPC_RMID, NULL);
-    shmctl(shm_H_mutexing3, IPC_RMID, NULL);
-    shmctl(shm_O_mutexing3, IPC_RMID, NULL);
+    if(
+    (shmctl(shm_O_id, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_count_id, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_H_id, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_queued_O, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_queued_H, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_O_amount, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_H_amount, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_mutex_id, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_mutex_id1, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_H_mutexing, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_O_mutexing, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_H_mutexing1, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_O_mutexing1, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_H_mutexing2, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_O_mutexing2, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_H_mutexing3, IPC_RMID, NULL)) == -1 ||
+    (shmctl(shm_O_mutexing3, IPC_RMID, NULL)) == -1 ||
+    
 
-
-    shmdt(O_id);
-    shmdt(O_queued);
-    shmdt(H_id);
-    shmdt(H_queued);
-    shmdt(count_id);
-    shmdt(O_amount);
-    shmdt(H_amount);
-    shmdt(mutex_id);
-    shmdt(mutex_id1);
-    shmdt(H_mutexing);
-    shmdt(O_mutexing);
-    shmdt(H_mutexing1);
-    shmdt(O_mutexing1);
-    shmdt(H_mutexing2);
-    shmdt(O_mutexing2);
-    shmdt(H_mutexing3);
-    shmdt(O_mutexing3);
+    (shmdt(O_id)) == -1 ||
+    (shmdt(O_queued)) == -1 ||
+    (shmdt(H_id)) == -1 ||
+    (shmdt(H_queued)) == -1 ||
+    (shmdt(count_id)) == -1 ||
+    (shmdt(O_amount)) == -1 ||
+    (shmdt(H_amount)) == -1 ||
+    (shmdt(mutex_id)) == -1 ||
+    (shmdt(mutex_id1)) == -1 ||
+    (shmdt(H_mutexing)) == -1 ||
+    (shmdt(O_mutexing)) == -1 ||
+    (shmdt(H_mutexing1)) == -1 ||
+    (shmdt(O_mutexing1)) == -1 ||
+    (shmdt(H_mutexing2)) == -1 ||
+    (shmdt(O_mutexing2)) == -1 ||
+    (shmdt(H_mutexing3)) == -1 ||
+    (shmdt(O_mutexing3)) == -1)
+    {
+        fprintf(stderr,"Error has occured during deleting share memmory.\n");
+        exit(1);
+    }
 
     return 0;
 }
