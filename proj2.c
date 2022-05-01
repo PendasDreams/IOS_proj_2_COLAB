@@ -6,7 +6,6 @@
 // Date:   04.2022
 
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -26,41 +25,43 @@
 
 FILE *file;
 
-//pointers
-int *count_id = NULL;
-int *O_id = NULL;
+//pointers for shm
+int *count_id = NULL; //process counter
+int *O_id = NULL;     //first phase O counter
 int *H_id = NULL;
-int *O_queued = NULL;
+int *O_queued = NULL;  // second phase O counter
 int *H_queued = NULL;
-int *O_amount = NULL;
+int *O_amount = NULL;   // third phace O counter
 int *H_amount = NULL;
-int *mutex_id = NULL;
-int *mutex_id1 = NULL;
-int *O_mutexing = NULL;
+int *mutex_id = NULL;   // first phace mutex counter
+int *mutex_id1 = NULL;  // second phase mutex counter
+int *O_mutexing = NULL; // first counter of O already mutexing
 int *H_mutexing = NULL;
-int *H_mutexing_counter = NULL;
-int *O_mutexing1 = NULL;
+int *O_mutexing1 = NULL; // second counter of O already mutexing
 int *H_mutexing1 = NULL;
-int *O_mutexing2 = NULL;
+int *O_mutexing2 = NULL; // third counter of O already mutexing
 int *H_mutexing2 = NULL;
+int *H_mutexing3 = NULL;  // fourth counter of O already mutexing
+int *O_mutexing3 = NULL;
 
 //shared memmory vars
-int   shm_O_id = 0; // id of Nth atom
+int   shm_O_id = 0;
 int   shm_H_id = 0;
 int   shm_count_id = 1;
-int   shm_queued_O = 0; // first O counter
+int   shm_queued_O = 0;
 int   shm_queued_H = 0;
-int   shm_O_amount = 0; // amaount of atoms in process at exact time 
+int   shm_O_amount = 0;
 int   shm_H_amount = 0;
-int   shm_mutex_id = 0; // id of molecule
-int   shm_mutex_id1 = 0; // id of molecule
+int   shm_mutex_id = 0;
+int   shm_mutex_id1 = 0;
 int   shm_O_mutexing = 1;
 int   shm_H_mutexing = 1;
-int   shm_H_mutexing_counter = 0;
 int   shm_O_mutexing1 = 1;
 int   shm_H_mutexing1 = 1;
 int   shm_O_mutexing2 = 1;
 int   shm_H_mutexing2 = 1;
+int   shm_H_mutexing3 = 0;
+int   shm_O_mutexing3 = 0;
 
 //strcture of paramerters
 typedef struct Params
@@ -107,12 +108,14 @@ int main(int argc, char **argv){
     }
     setbuf(file, NULL);
 
+    //prepare shm and semaphores
     prepare_sources();
 
 
     *H_amount = params.Hydro;
     *O_amount = params.Oxy;
 
+    //create NO processes
     for(int i = 1; i <= params.Oxy; i++)
     {
         pid_t id = fork();
@@ -123,6 +126,7 @@ int main(int argc, char **argv){
         }
     }
 
+    //create NH processes
     for(int i = 1; i <= params.Hydro; i++)
     {
         pid_t id = fork();
@@ -134,9 +138,10 @@ int main(int argc, char **argv){
     }
 
 
-
+    //wait for kids
     while(wait(NULL) > 0);
 
+    //clear shm and semaphores
     clear_sources();
 
     return 0;
@@ -144,6 +149,8 @@ int main(int argc, char **argv){
 
 // oxygen
 void oxygen_f(){
+
+    //process started
     sem_wait(print);
     (*count_id)++;
     (*O_id)++;
@@ -151,6 +158,7 @@ void oxygen_f(){
     fflush(file);
     sem_post(print);
 
+    //wait some time representing time getting into queue
     usleep(rand() % (params.Max_queue_time + 1) * 1000);
 
     sem_wait(print);
@@ -160,29 +168,26 @@ void oxygen_f(){
     fflush(file);
     sem_post(print);
 
-
-    sem_wait(mutex);
-
-    
-
-   
-
-    (*O_mutexing)++;
-
-
-    if(*O_amount <= 0 || *H_amount <=1){
-
+    //kill child if there is not enough other atoms
+    if(params.Hydro <=1)
+    {
         sem_wait(print);
         (*count_id)++;
-        (*O_mutexing1)++;
-        fprintf(file,"%d: O %d: not enough H\n", *count_id, *O_mutexing1); 
+        fprintf(file,"%d: O %d: not enough H\n", *count_id, *O_queued);        
         fflush(file);
         sem_post(print);
         sem_post(mutex);
         exit(1);
-
     }
-    else if(*H_mutexing >= 2){
+
+    //mutex place where atoms goes one by one
+    sem_wait(mutex);
+
+    (*O_mutexing)++;
+
+    //if there is enough atoms to create molecule than let go two hydrogens and one oxygen
+    if(*H_mutexing >= 2)
+    {
         (*mutex_id)++;
         sem_post(hydrogen);
         sem_post(hydrogen);
@@ -190,44 +195,62 @@ void oxygen_f(){
         sem_post(oxygen);
         *O_mutexing = *O_mutexing - 1;
     }
+    //if there is not enough atoms to create molecule let other atoms get into mutex place
     else
     {
         sem_post(mutex);
     }
 
-
-
+    //queue of oxygens
     sem_wait(oxygen);
 
+    //if there is not enough oxygens to create molecule kill childs
+    if(*H_amount <= 1 || *O_amount <=0)
+    {
+        sem_wait(print);
+        (*count_id)++;
+        (*O_mutexing1)++;
+        fprintf(file,"%d: O %d: not enough H \n", *count_id, *O_mutexing1);
+        fflush(file);
+        sem_post(print);
+        exit(0);
+    }
+
+    //mutex is creating molecule now letting two atoms of H and one of O
     sem_wait(print);
     (*count_id)++;
     (*O_mutexing1)++;
-    fprintf(file,"%d: O %d: creating molecule %d\n", *count_id, *O_mutexing1,*mutex_id); 
+    fprintf(file,"%d: O %d: creating molecule %d\n", *count_id, *O_mutexing1,*mutex_id);
     fflush(file);
     sem_post(print);
 
+    //wait some time that represents creating molecule
     usleep(rand() % (params.Max_build_time + 1) * 1000);
+
+
+    //wait for two hydrogens in process
+    sem_wait(mutex2);
 
     sem_wait(print);
     (*count_id)++;
     (*O_mutexing2)++;
     fprintf(file,"%d: O %d: molecule %d created \n", *count_id, *O_mutexing2,*mutex_id); 
     fflush(file);
+    //O part was created ... let hydrogens to finish
+    sem_post(barier);
+    sem_post(barier);
     sem_post(print);
 
-    sem_post(barier);
-    sem_post(barier);
-   
+    //wait for ultimate molecule finish
+    sem_wait(barier1);
 
-
-
-
-    
+    sem_post(mutex);
 }
 
 // hydrogen
 void hydrogen_f(){
 
+    //process started
     sem_wait(print);
     (*count_id)++;
     (*H_id)++;
@@ -235,6 +258,7 @@ void hydrogen_f(){
     fflush(file);
     sem_post(print);
 
+    //wait some time representing time getting into queue
     usleep(rand() % (params.Max_queue_time + 1) * 1000);
 
     sem_wait(print);
@@ -244,27 +268,24 @@ void hydrogen_f(){
     fflush(file);
     sem_post(print);
 
+    //kill child if there is not enough other atoms
+    if(params.Oxy <= 0 || params.Hydro <= 1)
+    {
+        sem_wait(print);
+        (*count_id)++;
+        fprintf(file,"%d: H %d: not enough O or H\n", *count_id, *H_queued);        
+        fflush(file);
+        sem_post(print);
+        exit(1);
+    }
+
+    //mutex place where atoms goes one by one
     sem_wait(mutex);
 
     (*H_mutexing)++;
-
-    if(*O_amount <= 0 || *H_amount <=1){
-
-        sem_wait(print);
-        (*count_id)++;
-        (*H_mutexing1)++;
-        fprintf(file,"%d: H %d: not enough O or H \n", *count_id, *H_mutexing1); 
-        fflush(file);
-        sem_post(print);
-        sem_post(mutex);
-        sem_post(oxygen);
-
-        exit(1);
-
-    }
-
-    
-    else if(*H_mutexing >= 2 && *O_mutexing >= 1)
+ 
+     //if there is enough atoms to create molecule than let go two hydrogens and one oxygen
+    if(*H_mutexing >= 2 && *O_mutexing >= 1)
     {
         (*mutex_id)++;
         sem_post(hydrogen);
@@ -273,22 +294,43 @@ void hydrogen_f(){
         sem_post(oxygen);
         *O_mutexing = *O_mutexing - 1;
     }
+    //if there is not enough atoms to create molecule let other atoms get into mutex place
     else
     {
         sem_post(mutex);
     }
 
-    
-
+    //queue of hydrogens
     sem_wait(hydrogen);
 
+    //if there is not enough oxygens to create molecule kill childs
+    if(*O_amount <= 0 || *H_amount <=1)
+    {
+        sem_wait(print);
+        (*count_id)++;
+        (*H_mutexing1)++;
+        fprintf(file,"%d: H %d: not enough O or H\n", *count_id, *H_mutexing1);
+        fflush(file);
+        sem_post(print);
+        exit(0);
+    }
+
+    //mutex is creating molecule now letting two atoms of H and one of O
     sem_wait(print);
     (*count_id)++;
     (*H_mutexing1)++;
     fprintf(file,"%d: H %d: creating molecule %d\n", *count_id, *H_mutexing1,*mutex_id);
     fflush(file);
+    (*H_mutexing3)++;
     sem_post(print);
 
+    //wait for two hydrogens in process
+    if(*H_mutexing3 % 2 == 0)
+    {
+        sem_post(mutex2);
+    }
+
+    //wait for oxygen to finish creating molecule
     sem_wait(barier);
 
     sem_wait(print);
@@ -299,17 +341,31 @@ void hydrogen_f(){
     fflush(file);
     sem_post(print);
 
-    if(*mutex_id1 == 2){
+    //if last hydrogen finished molecule let oygen process ultimate finish moleule creation
+    if(*mutex_id1 == 2)
+    {
         *O_amount = *O_amount - 1;
         *H_amount = *H_amount - 2;
         *mutex_id1 = 0;
-        sem_post(mutex);
-        
+
+        sem_post(barier1);   
+  
+        // if there are not enugh atoms to create another molecule than kill all kids and finish process
+        if(*O_amount <= 0 || *H_amount <=1)
+        {
+            for (int i = 0; i < *H_amount; i++)
+            {
+                sem_post(mutex);
+                sem_post(hydrogen);
+            }
+            for (int i = 0; i < *O_amount; i++)
+            {
+                sem_post(mutex);
+                sem_post(oxygen);
+            }
+            clear_sources();
+        }  
     }
-    
-
-
-
 }
 
 // check input 
@@ -387,7 +443,7 @@ int prepare_sources(){
     sem_init(hydrogen, 1, 0);
     sem_init(print, 1, 1);
     sem_init(mutex, 1, 1);
-    sem_init(mutex2, 1, 2);
+    sem_init(mutex2, 1, 0);
     sem_init(barier, 1, 0);
     sem_init(barier1, 1, 0);
 
@@ -402,12 +458,13 @@ int prepare_sources(){
     shm_mutex_id = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
     shm_mutex_id1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
     shm_H_mutexing = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-    shm_H_mutexing_counter = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
     shm_O_mutexing = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
     shm_H_mutexing1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
     shm_O_mutexing1 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
     shm_H_mutexing2 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
     shm_O_mutexing2 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
+    shm_H_mutexing3 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
+    shm_O_mutexing3 = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
 
 
     O_id = (int *) shmat(shm_O_id, NULL, 0);
@@ -420,12 +477,13 @@ int prepare_sources(){
     mutex_id = (int *) shmat(shm_mutex_id, NULL, 0);
     mutex_id1 = (int *) shmat(shm_mutex_id1, NULL, 0);
     H_mutexing = (int *) shmat(shm_H_mutexing, NULL, 0);
-    H_mutexing_counter = (int *) shmat(shm_H_mutexing_counter, NULL, 0);
     O_mutexing = (int *) shmat(shm_O_mutexing, NULL, 0);
     H_mutexing1 = (int *) shmat(shm_H_mutexing1, NULL, 0);
     O_mutexing1 = (int *) shmat(shm_O_mutexing1, NULL, 0);
     H_mutexing2 = (int *) shmat(shm_H_mutexing2, NULL, 0);
     O_mutexing2 = (int *) shmat(shm_O_mutexing2, NULL, 0);
+    H_mutexing3 = (int *) shmat(shm_H_mutexing3, NULL, 0);
+    O_mutexing3 = (int *) shmat(shm_H_mutexing3, NULL, 0);
     
 
     return 0;
@@ -459,12 +517,13 @@ int clear_sources(){
     shmctl(shm_mutex_id, IPC_RMID, NULL);
     shmctl(shm_mutex_id1, IPC_RMID, NULL);
     shmctl(shm_H_mutexing, IPC_RMID, NULL);
-    shmctl(shm_H_mutexing_counter, IPC_RMID, NULL);
     shmctl(shm_O_mutexing, IPC_RMID, NULL);
     shmctl(shm_H_mutexing1, IPC_RMID, NULL);
     shmctl(shm_O_mutexing1, IPC_RMID, NULL);
     shmctl(shm_H_mutexing2, IPC_RMID, NULL);
     shmctl(shm_O_mutexing2, IPC_RMID, NULL);
+    shmctl(shm_H_mutexing3, IPC_RMID, NULL);
+    shmctl(shm_O_mutexing3, IPC_RMID, NULL);
 
 
     shmdt(O_id);
@@ -477,12 +536,13 @@ int clear_sources(){
     shmdt(mutex_id);
     shmdt(mutex_id1);
     shmdt(H_mutexing);
-    shmdt(H_mutexing_counter);
     shmdt(O_mutexing);
     shmdt(H_mutexing1);
     shmdt(O_mutexing1);
     shmdt(H_mutexing2);
     shmdt(O_mutexing2);
+    shmdt(H_mutexing3);
+    shmdt(O_mutexing3);
 
     return 0;
 }
