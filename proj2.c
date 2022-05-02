@@ -103,6 +103,7 @@ int main(int argc, char **argv){
     if((file = fopen("proj2.out", "w")) == NULL) 
     {
         fprintf(stderr, "ERROR something went wrong with output fille\n");
+        fclose(file);
         exit(1);
         return 1;
     }
@@ -122,6 +123,7 @@ int main(int argc, char **argv){
         if(id == 0)
         {
             oxygen_f();
+            fclose(file);
             exit(0);
         }
     }
@@ -133,6 +135,7 @@ int main(int argc, char **argv){
         if(id == 0)
         {  
             hydrogen_f();
+            fclose(file);
             exit(0);
         }
     }
@@ -177,6 +180,7 @@ void oxygen_f(){
         fflush(file);
         sem_post(print);
         sem_post(mutex);
+        fclose(file);
         exit(1);
     }
 
@@ -213,6 +217,7 @@ void oxygen_f(){
         fprintf(file,"%d: O %d: not enough H \n", *count_id, *O_mutexing1);
         fflush(file);
         sem_post(print);
+        fclose(file);
         exit(0);
     }
 
@@ -276,6 +281,7 @@ void hydrogen_f(){
         fprintf(file,"%d: H %d: not enough O or H\n", *count_id, *H_queued);        
         fflush(file);
         sem_post(print);
+        fclose(file);
         exit(1);
     }
 
@@ -312,8 +318,11 @@ void hydrogen_f(){
         fprintf(file,"%d: H %d: not enough O or H\n", *count_id, *H_mutexing1);
         fflush(file);
         sem_post(print);
+
+        fclose(file);
         exit(0);
     }
+    
 
     //mutex is creating molecule now letting two atoms of H and one of O
     sem_wait(print);
@@ -363,7 +372,6 @@ void hydrogen_f(){
                 sem_post(mutex);
                 sem_post(oxygen);
             }
-            clear_sources();
         }  
     }
 }
@@ -415,12 +423,12 @@ int input_parse(int argc, char *argv[], params_t *params){
     if(params->Max_build_time > 1000 || params->Max_build_time < 0)
     {
         
-        fprintf(stderr,"Third argument out of range [0-1000].\n");
+        fprintf(stderr,"Fourth argument out of range [0-1000].\n");
         exit(1);
     }
     if(params->Max_queue_time > 1000 || params->Max_queue_time < 0)
     {
-        fprintf(stderr,"Fourth argument out of range [0-1000].\n");
+        fprintf(stderr,"Third argument out of range [0-1000].\n");
         exit(1);
     }
     
@@ -565,6 +573,9 @@ int clear_sources(){
         fprintf(stderr,"Error has occured during deleting share memmory.\n");
         exit(1);
     }
+
+
+    fclose(file);
 
     return 0;
 }
